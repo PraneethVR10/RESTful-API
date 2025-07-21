@@ -1,6 +1,13 @@
 package handler
 
-import "math/rand"
+import (
+	"math/rand"
+	"net/http"
+
+	"restful-api/internal/model"
+
+	"github.com/gin-gonic/gin"
+)
 
 var records = []model.Record{
 	{ID: "1", Name: "Praneeth", AdmissionNum: rand.Intn(100)},
@@ -10,14 +17,16 @@ var records = []model.Record{
 
 // write the logic for how many handlers do you want to have
 
-func GetAllStudents() {
+func GetAllStudents(c *gin.Context) {
+
+	c.IndentedJSON(http.StatusOK, records)
 
 } // Uses GET
 
-func GetStudentID() // Uses GET
+//func GetStudentID() // Uses GET
 
-func AddStudent() // Uses POST
+//func AddStudent() // Uses POST
 
-func UpdateStudentInfo() // Uses PUT
+//func UpdateStudentInfo() // Uses PUT
 
-func DeleteStudentRecord() // Uses DELETE
+//func DeleteStudentRecord() // Uses DELETE

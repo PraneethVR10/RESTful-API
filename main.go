@@ -1,17 +1,12 @@
 package main
 
-import "math/rand"
+import (
+	"github.com/gin-gonic/gin"
+)
 
-type Record struct {
-	ID           string `json:"id"`
-	Name         string `json:"name"`
-	AdmissionNum string `json:"admissionNum"`
+func main() {
+	r := gin.Default()
+	r.GET("/students", GetAllStudents)
+
+	r.Run(":3000")
 }
-
-var record = []record{
-
-	{ID: "1", Name: "Praneeth", AdmissionNum: rand.Intn(10)},
-	{ID: "2", Name: "", AdmissionNum: rand.Intn(10)},
-}
-
-func main()
