@@ -4,15 +4,15 @@ import (
 	"math/rand"
 	"net/http"
 
-	"restful-api/internal/model"
+	"github.com/PraneethVR10/RESTful-API/internal/model"
 
 	"github.com/gin-gonic/gin"
 )
 
 var records = []model.Record{
-	{ID: "1", Name: "Praneeth", AdmissionNum: rand.Intn(100)},
-	{ID: "2", Name: "Sonu", AdmissionNum: rand.Intn(100)},
-	{ID: "3", Name: "VR", AdmissionNum: rand.Intn(100)},
+	{ID: "1", Name: "Praneeth", AdmissionNum: rand.Intn(200)},
+	{ID: "2", Name: "Sonu", AdmissionNum: rand.Intn(200)},
+	{ID: "3", Name: "VR", AdmissionNum: rand.Intn(200)},
 }
 
 // write the logic for how many handlers do you want to have
