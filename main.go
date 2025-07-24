@@ -1,11 +1,21 @@
 package main
 
 import (
+	"github.com/PraneethVR10/RESTful-API/internal/db"
 	"github.com/PraneethVR10/RESTful-API/internal/handler"
 	"github.com/gin-gonic/gin"
 )
 
+func DbConnection() {
+
+	db.ConnectDB()
+	defer db.DB.Close()
+	db.CreateStudentsTable()
+}
 func main() {
+
+	DbConnection()
+
 	r := gin.Default()
 	r.GET("/students", handler.GetAllStudents)
 	r.GET("/students/:id", handler.GetStudentID)
