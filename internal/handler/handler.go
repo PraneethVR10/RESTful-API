@@ -26,7 +26,6 @@ func GetAllStudents(c *gin.Context) { // Uses GET
 func GetStudentID(c *gin.Context) { // Uses GET
 
 	id := c.Param("id")
-
 	// Loop over the list of albums, looking for
 	// an album whose ID value matches the parameter.
 	for _, a := range records {
@@ -40,14 +39,13 @@ func GetStudentID(c *gin.Context) { // Uses GET
 func AddStudent(c *gin.Context) { // Uses POST
 
 	var newStudent model.Record
-
-	// Bind the JSON payload from the request body to the NewStudent struct
+	// Bind the JSON from the request body to the NewStudent struct
 	c.ShouldBindJSON(&newStudent)
 	records = append(records, newStudent)
 	c.IndentedJSON(http.StatusOK, newStudent)
 }
 
-func UpdateStudentInfo(c *gin.Context) {
+func UpdateStudentInfo(c *gin.Context) { // Uses PUT
 	id := c.Param("id")
 	var newDetails model.Record
 	c.ShouldBindJSON(&newDetails)
@@ -63,6 +61,13 @@ func UpdateStudentInfo(c *gin.Context) {
 
 }
 
-// Uses PUT
+func DeleteStudentRecord(c *gin.Context) { // Uses DELETE
 
-//func DeleteStudentRecord() // Uses DELETE
+	id := c.Param("id") // Get ID from the request URL
+	for i, student := range records {
+		if student.ID == id {
+			// Remove the student from the slice
+			records = append(records[:i], records[i+1:]...)
+		}
+	}
+}

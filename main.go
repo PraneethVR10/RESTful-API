@@ -11,5 +11,6 @@ func main() {
 	r.GET("/students/:id", handler.GetStudentID)
 	r.POST("/students", handler.AddStudent)
 	r.PUT("/students/update/:id", handler.UpdateStudentInfo)
+	r.DELETE("/students/:id", handler.DeleteStudentRecord)
 	r.Run(":3000")
 }
