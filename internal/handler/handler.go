@@ -33,12 +33,23 @@ func GetStudentID(c *gin.Context) { // Uses GET
 			c.IndentedJSON(http.StatusOK, a)
 			return
 		}
+
 	}
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "album not found"})
 }
 
-//func AddStudent() // Uses POST
+func AddStudent(c *gin.Context) { // Uses POST
 
-//func UpdateStudentInfo() // Uses PUT
+	var newStudent model.Record
+
+	// Bind the JSON payload from the request body to the NewStudent struct
+	c.ShouldBindJSON(&newStudent)
+
+	records = append(records, newStudent)
+	c.JSON(http.StatusOK, newStudent)
+}
+
+func UpdateStudentInfo() {
+
+} // Uses PUT
 
 //func DeleteStudentRecord() // Uses DELETE
