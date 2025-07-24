@@ -24,6 +24,7 @@ func GetAllStudents(c *gin.Context) { // Uses GET
 }
 
 func GetStudentID(c *gin.Context) { // Uses GET
+
 	id := c.Param("id")
 
 	// Loop over the list of albums, looking for
@@ -33,7 +34,6 @@ func GetStudentID(c *gin.Context) { // Uses GET
 			c.IndentedJSON(http.StatusOK, a)
 			return
 		}
-
 	}
 }
 
@@ -43,13 +43,26 @@ func AddStudent(c *gin.Context) { // Uses POST
 
 	// Bind the JSON payload from the request body to the NewStudent struct
 	c.ShouldBindJSON(&newStudent)
-
 	records = append(records, newStudent)
-	c.JSON(http.StatusOK, newStudent)
+	c.IndentedJSON(http.StatusOK, newStudent)
 }
 
-func UpdateStudentInfo() {
+func UpdateStudentInfo(c *gin.Context) {
+	id := c.Param("id")
+	var newDetails model.Record
+	c.ShouldBindJSON(&newDetails)
 
-} // Uses PUT
+	for i, s := range records {
+		if s.ID == id {
+			records[i] = newDetails
+			c.JSON(http.StatusOK, newDetails)
+			return
+		}
+	}
+	c.JSON(http.StatusNotFound, gin.H{"message": "student not found"})
+
+}
+
+// Uses PUT
 
 //func DeleteStudentRecord() // Uses DELETE

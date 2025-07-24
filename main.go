@@ -10,6 +10,6 @@ func main() {
 	r.GET("/students", handler.GetAllStudents)
 	r.GET("/students/:id", handler.GetStudentID)
 	r.POST("/students", handler.AddStudent)
-
+	r.PUT("/students/update/:id", handler.UpdateStudentInfo)
 	r.Run(":3000")
 }
