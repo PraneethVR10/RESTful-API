@@ -8,6 +8,7 @@ import (
 	"github.com/PraneethVR10/RESTful-API/internal/db"
 	"github.com/PraneethVR10/RESTful-API/internal/model"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx"
 
 	"github.com/gin-gonic/gin"
 )
@@ -77,6 +78,7 @@ func GetStudentID(c *gin.Context) { // Uses GET
 }
 
 func AddStudent(c *gin.Context) { // Uses POST
+	// add student details from the response body
 	var students []model.Record
 	if err := c.BindJSON(&students); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -86,7 +88,7 @@ func AddStudent(c *gin.Context) { // Uses POST
 		return
 	}
 
-	// Insert each student into the database
+	// Insert each student data into the database
 	for _, student := range students {
 		_, err := db.DB.Exec(
 			context.Background(),
@@ -115,7 +117,7 @@ func AddStudent(c *gin.Context) { // Uses POST
 	}
 	defer rows.Close()
 
-	// Build slice of students from result
+	// Display the data from the result
 	var allStudents []model.Record
 	for rows.Next() {
 		var student model.Record
@@ -134,28 +136,48 @@ func AddStudent(c *gin.Context) { // Uses POST
 }
 
 func UpdateStudentInfo(c *gin.Context) { // Uses PUT
-	id := c.Param("id")
-	var newDetails model.Record
-	c.ShouldBindJSON(&newDetails)
+	var updateDetails []model.Record
+	if err := c.BindJSON(&updateDetails); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Invalid Entry",
+			"details": err.Error(),
+		})
+		return
+	}
 
-	for i, s := range records {
-		if s.ID == id {
-			records[i] = newDetails
-			c.JSON(http.StatusOK, newDetails)
+	for _, student := range updateDetails {
+
+		var existingData model.Record
+		err := db.DB.QueryRow(context.Background(), "SELECT id FROM students WHERE id=$1", student.ID).Scan(&existingData.ID)
+
+		if err == pgx.ErrNoRows {
+			continue
+		} else if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to locate student", "details": err.Error()})
+			return
+
+		}
+		_, err = db.DB.Exec(
+			context.Background(),
+			"UPDATE students SET name = $1, admission_num = $2 WHERE id = $3",
+			student.Name, student.AdmissionNum, student.ID,
+		)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Update failed", "details": err.Error()})
 			return
 		}
 	}
-	c.JSON(http.StatusNotFound, gin.H{"message": "student not found"})
+	c.JSON(http.StatusOK, gin.H{"message": "Students updated successfully"})
 
 }
 
-func DeleteStudentRecord(c *gin.Context) { // Uses DELETE
-
-	id := c.Param("id") // Get ID from the request URL
-	for i, student := range records {
-		if student.ID == id {
-			// Remove the student from the slice
-			records = append(records[:i], records[i+1:]...)
-		}
-	}
-}
+//func DeleteStudentRecord(c *gin.Context) { // Uses DELETE
+//
+//	id := c.Param("id") // Get ID from the request URL
+//	for i, student := range records {
+//		if student.ID == id {
+//			// Remove the student from the slice
+//			records = append(records[:i], records[i+1:]...)
+//		}
+//	}
+//}
