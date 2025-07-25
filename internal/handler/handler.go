@@ -77,12 +77,60 @@ func GetStudentID(c *gin.Context) { // Uses GET
 }
 
 func AddStudent(c *gin.Context) { // Uses POST
+	var students []model.Record
+	if err := c.BindJSON(&students); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Invalid input",
+			"details": err.Error(),
+		})
+		return
+	}
 
-	var newStudent model.Record
-	// Bind the JSON from the request body to the NewStudent struct
-	c.ShouldBindJSON(&newStudent)
-	records = append(records, newStudent)
-	c.IndentedJSON(http.StatusOK, newStudent)
+	// Insert each student into the database
+	for _, student := range students {
+		_, err := db.DB.Exec(
+			context.Background(),
+			"INSERT INTO students (id, name, admission_num) VALUES ($1, $2, $3)",
+			student.ID,
+			student.Name,
+			student.AdmissionNum,
+		)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to insert",
+				"details": err.Error(),
+			})
+			return
+		}
+	}
+
+	// Query all students from the database
+	rows, err := db.DB.Query(context.Background(), "SELECT id, name, admission_num FROM students")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to fetch data",
+			"details": err.Error(),
+		})
+		return
+	}
+	defer rows.Close()
+
+	// Build slice of students from result
+	var allStudents []model.Record
+	for rows.Next() {
+		var student model.Record
+		if err := rows.Scan(&student.ID, &student.Name, &student.AdmissionNum); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Error scanning row",
+				"details": err.Error(),
+			})
+			return
+		}
+		allStudents = append(allStudents, student)
+	}
+
+	// Return all students in JSON format
+	c.IndentedJSON(http.StatusOK, allStudents)
 }
 
 func UpdateStudentInfo(c *gin.Context) { // Uses PUT
