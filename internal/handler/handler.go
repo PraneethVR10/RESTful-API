@@ -40,15 +40,13 @@ func InsertData(c *gin.Context) {
 }
 
 func GetAllStudents(c *gin.Context) { // Uses GET
-
-	rows, err := db.DB.Query(context.Background(), "SELECT id, name, admission_num FROM students")
+	rows, err := db.DB.Query(context.Background(), "SELECT id,name,admission_num FROM students")
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch data", "details": err.Error()})
-		return
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": "displaying data from the database"})
 	}
 	defer rows.Close()
 
-	var students []model.Record
+	var data []model.Record
 
 	for rows.Next() {
 		var student model.Record
@@ -57,23 +55,25 @@ func GetAllStudents(c *gin.Context) { // Uses GET
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error scanning row", "details": err.Error()})
 			return
 		}
-		students = append(students, student)
-	}
+		data = append(data, student)
 
-	c.IndentedJSON(http.StatusOK, students)
+	}
+	c.IndentedJSON(http.StatusOK, data)
+
 }
 
 func GetStudentID(c *gin.Context) { // Uses GET
 
-	id := c.Param("id")
-	// Loop over the list of albums, looking for
-	// an album whose ID value matches the parameter.
-	for _, a := range records {
-		if a.ID == id {
-			c.IndentedJSON(http.StatusOK, a)
-			return
-		}
+	id := c.Param("id") // get ID from URL
+
+	var student model.Record
+
+	err := db.DB.QueryRow(context.Background(), "SELECT id, name, admission_num FROM students WHERE id = $1", id).Scan(&student.ID, &student.Name, &student.AdmissionNum)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Student not found", "details": err.Error()})
+		return
 	}
+	c.IndentedJSON(http.StatusOK, student)
 }
 
 func AddStudent(c *gin.Context) { // Uses POST
