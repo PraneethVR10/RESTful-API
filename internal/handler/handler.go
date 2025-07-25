@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"context"
 	"math/rand"
 	"net/http"
 
+	"github.com/PraneethVR10/RESTful-API/internal/db"
 	"github.com/PraneethVR10/RESTful-API/internal/model"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +18,22 @@ var records = []model.Record{
 }
 
 // write the logic for how many handlers do you want to have
+
+func InsertData(c *gin.Context) {
+	for _, student := range records {
+		_, err := db.DB.Exec(
+			context.Background(), "INSERT INTO students (id, name, admission_num) VALUES ($1, $2, $3)",
+			student.ID,
+			student.Name,
+			student.AdmissionNum,
+		)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert", "details": err.Error()})
+			return
+		}
+	}
+	c.JSON(http.StatusCreated, gin.H{"message": "Records inserted successfully"})
+}
 
 func GetAllStudents(c *gin.Context) { // Uses GET
 

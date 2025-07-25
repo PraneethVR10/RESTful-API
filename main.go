@@ -9,14 +9,17 @@ import (
 func DbConnection() {
 
 	db.ConnectDB()
-	defer db.DB.Close()
 	db.CreateDatabaseIfNotExists()
+	db.CreateStudentsTable()
+
 }
 func main() {
 
 	DbConnection()
+	defer db.DB.Close()
 
 	r := gin.Default()
+	r.POST("/seed", handler.InsertData)
 	r.GET("/students", handler.GetAllStudents)
 	r.GET("/students/:id", handler.GetStudentID)
 	r.POST("/students", handler.AddStudent)
