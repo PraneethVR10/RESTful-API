@@ -171,13 +171,26 @@ func UpdateStudentInfo(c *gin.Context) { // Uses PUT
 
 }
 
-//func DeleteStudentRecord(c *gin.Context) { // Uses DELETE
-//
-//	id := c.Param("id") // Get ID from the request URL
-//	for i, student := range records {
-//		if student.ID == id {
-//			// Remove the student from the slice
-//			records = append(records[:i], records[i+1:]...)
-//		}
-//	}
-//}
+func DeleteStudentRecord(c *gin.Context) { // Uses DELETE
+
+	idParam := c.Param("id")
+
+	var exists string
+	err := db.DB.QueryRow(context.Background(), "SELECT id FROM students WHERE id=$1", idParam).Scan(&exists)
+
+	if err == pgx.ErrNoRows {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Student not found"})
+		return
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error checking student existence", "details": err.Error()})
+		return
+	}
+
+	_, err = db.DB.Exec(context.Background(), "DELETE FROM students WHERE id=$1", idParam)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting student", "details": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Student deleted successfully"})
+}
