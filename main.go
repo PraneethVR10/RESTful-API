@@ -10,7 +10,7 @@ func DbConnection() {
 
 	db.ConnectDB()
 	defer db.DB.Close()
-	db.CreateStudentsTable()
+	db.CreateDatabaseIfNotExists()
 }
 func main() {
 
