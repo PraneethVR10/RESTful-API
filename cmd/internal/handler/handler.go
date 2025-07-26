@@ -5,8 +5,8 @@ import (
 	"math/rand"
 	"net/http"
 
-	"github.com/PraneethVR10/RESTful-API/internal/db"
-	"github.com/PraneethVR10/RESTful-API/internal/model"
+	"github.com/PraneethVR10/RESTful-API/cmd/internal/db"
+	"github.com/PraneethVR10/RESTful-API/cmd/internal/model"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx"
 
