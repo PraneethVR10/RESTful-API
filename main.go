@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/PraneethVR10/RESTful-API/cmd/internal/db"
-	"github.com/PraneethVR10/RESTful-API/cmd/internal/handler"
+	"github.com/PraneethVR10/RESTful-API/internal/db"
+	"github.com/PraneethVR10/RESTful-API/internal/handler"
 	"github.com/gin-gonic/gin"
 )
 
