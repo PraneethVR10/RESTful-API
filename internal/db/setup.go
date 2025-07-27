@@ -10,7 +10,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// CreateDatabaseIfNotExists connects to "postgres" DB and creates "students" DB if not exists
 func CreateDatabaseIfNotExists() {
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {

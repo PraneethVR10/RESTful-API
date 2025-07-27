@@ -1,4 +1,3 @@
-// db/db.go
 package db
 
 import (
@@ -16,7 +15,7 @@ var DB *pgxpool.Pool
 func ConnectDB() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Println("Warning: .env file not found, continuing with system environment variables")
 	}
 
 	dbURL := os.Getenv("DATABASE_URL")
