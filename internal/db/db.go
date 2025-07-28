@@ -13,6 +13,7 @@ var DB *pgxpool.Pool
 func ConnectDB() {
 
 	dbURL := os.Getenv("DATABASE_URL")
+	fmt.Println("DATABASE_URL from env:", dbURL)
 	if dbURL == "" {
 		panic("DATABASE_URL not set in environment")
 	}
