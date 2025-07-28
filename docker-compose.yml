@@ -23,7 +23,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL : postgres://praneeth:bat2001@db:5432/students
+      DATABASE_URL: postgres://praneeth:bat2001@db:5432/students
     depends_on:
       db:
         condition: service_healthy
