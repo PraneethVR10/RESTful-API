@@ -22,10 +22,20 @@ var records = []model.Record{
 // write the logic for how many handlers do you want to have
 
 func InsertData(c *gin.Context) {
+
 	var insertedRecords []model.Record
-	for _, student := range records {
+	names := []string{"Praneeth", "Sonu", "VR"}
+
+	for _, name := range names {
+		student := model.Record{
+			ID:           uuid.New().String(), // NEW UUID EACH TIME
+			Name:         name,
+			AdmissionNum: rand.Intn(200),
+		}
+
 		_, err := db.DB.Exec(
-			context.Background(), "INSERT INTO students (id, name, admission_num) VALUES ($1, $2, $3)",
+			context.Background(),
+			"INSERT INTO students (id, name, admission_num) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING",
 			student.ID,
 			student.Name,
 			student.AdmissionNum,
@@ -36,8 +46,8 @@ func InsertData(c *gin.Context) {
 		}
 		insertedRecords = append(insertedRecords, student)
 	}
-	c.IndentedJSON(http.StatusOK, insertedRecords)
 
+	c.IndentedJSON(http.StatusOK, insertedRecords)
 }
 
 func GetAllStudents(c *gin.Context) { // Uses GET

@@ -1,14 +1,6 @@
 name: rest-api
 
 services:
-  api:
-    build: .
-    ports:
-      - "3000:3000"
-    environment:
-      DATABASE_URL : postgres://praneeth:bat2001@db:5432/students
-    depends_on:
-        - db
 
   db:
     image: postgres:16
@@ -18,3 +10,16 @@ services:
       POSTGRES_DB: students
     ports:
       - "5433:5432"
+    volumes:
+      - api_pgdata:/var/lib/postgresql/data
+
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL : postgres://praneeth:bat2001@db:5432/students
+    depends_on:
+        - db
+volumes:
+  api_pgdata:
