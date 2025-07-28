@@ -12,6 +12,11 @@ services:
       - "5433:5432"
     volumes:
       - api_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD","pg_isready","-U","praneeth"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   api:
     build: .
@@ -20,6 +25,8 @@ services:
     environment:
       DATABASE_URL : postgres://praneeth:bat2001@db:5432/students
     depends_on:
-        - db
+      db:
+        condition: service_healthy
+
 volumes:
   api_pgdata:
