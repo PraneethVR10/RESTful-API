@@ -5,9 +5,9 @@ services:
   db:
     image: postgres:16
     environment:
-      POSTGRES_USER: praneeth
-      POSTGRES_PASSWORD: bat2001
-      POSTGRES_DB: students
+      POSTGRES_USER: $DATABASE_USER
+      POSTGRES_PASSWORD: $DATABASE_PASSWORD
+      POSTGRES_DB: $DATABASE_NAME
     ports:
       - "5433:5432"
     volumes:
@@ -23,7 +23,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgres://praneeth:bat2001@db:5432/students
+      DATABASE_URL: postgres://$DATABASE_USER:$DATABASE_PASSWORD@db:5432/$DATABASE_NAME
     depends_on:
       db:
         condition: service_healthy
